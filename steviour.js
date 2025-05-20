@@ -65,6 +65,10 @@ const loadConfig = () => {
     }
 };
 
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 yargs(hideBin(process.argv))
     .command('init [compiler]', 'Create server configuration', yargs => {
         return yargs
@@ -100,7 +104,7 @@ yargs(hideBin(process.argv))
             describe: "Run with single runtime",
             type: "number"
         })
-    }, (argv) => {
+    }, async (argv) => {
         const config = loadConfig();
         const packageJson = require("./package.json")
 
@@ -136,7 +140,7 @@ yargs(hideBin(process.argv))
                 process.exit(1);
             }
 
-            const compiler = argv.compiler || 'node';
+            const compiler = config.compiler || 'node';
             const command = config.script
                 ? spawn(config.script, { shell: true, cwd: dir, env: buildEnv(shardId, shardName, config), stdio: 'inherit' })
                 : spawn(compiler, [config.main], { cwd: dir, env: buildEnv(shardId, shardName, config), stdio: 'inherit' });
@@ -168,6 +172,7 @@ yargs(hideBin(process.argv))
                 shardName = BigInt('0x' + hash).toString(36).toUpperCase().substring(0, 6);
 
                 spawnProcess(i, shardName);
+                await delay(config?.shardScheme?.delay ?? 2000)
             }
         }
     })

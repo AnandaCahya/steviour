@@ -56,7 +56,8 @@ or another compiler like
   "main": "index.js",  //Main file || change it with script if you want custom runtime
   "compiler": "node", //Choices node, ruby, python
   "shardScheme": { //OPTIONAL - Will run single runtime if you not provide this
-    "total": 1 //Total shard
+    "total": 1, //Total shard
+    "delay": 4000 //Shard create delay (in milisecond)
   },
   "autoRestart": true, // Default: true - Change to 'false' to disable auto restart fail
   "restartDelay": 2500 // Change it to delay restart - Best option to avoid rate limit
