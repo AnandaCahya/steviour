@@ -46,6 +46,23 @@ or another compiler like
 }
 ```
 
+### Configuration
+
+```json
+{
+  "serverName": "DESKTOP-TBC69PH", //Device Name
+  "name": "Aria-Tiktok-Downloader", //Project or Folder name
+  "author": "ananda", //Device user
+  "main": "index.js",  //Main file || change it with script if you want custom runtime
+  "compiler": "node", //Choices node, ruby, python
+  "shardScheme": { //OPTIONAL - Will run single runtime if you not provide this
+    "total": 1 //Total shard
+  },
+  "autoRestart": true, // Default: true - Change to 'false' to disable auto restart fail
+  "restartDelay": 2500 // Change it to delay restart - Best option to avoid rate limit
+}
+```
+
 ### Shard identification
 
 Steviour will set `ENVIRONMENT` in your shard runtime.

@@ -14,26 +14,34 @@ const currentFolder = path.basename(dir);
 const configPath = path.join(dir, 'steviour.json');
 
 class Print {
-    constructor(id) {
+    constructor(id, name) {
         this.id = id;
+        this.name = name ?? "FFFFF"
     }
 
     out(message) {
         const timestamp = new Date().toISOString();
-        process.stdout.write(`${chalk.gray(`[${timestamp}]`)} ${chalk.magenta.bold(`□ [${this.id}] ▻`)} ${message.toString()}`);
+        process.stdout.write(`${chalk.gray(`[${timestamp}]`)} ${chalk.magenta.bold(`□ [${this.id} - ${this.name}] ▻`)} ${message.toString()}`);
     }
 }
 
-const createConfig = (serverName, force = false) => {
+const createConfig = (serverName, force = false, argv) => {
     const template = {
         serverName,
         name: currentFolder ?? "Unnamed Project",
         author: os.userInfo().username ?? "Unknown Person",
         main: "index.js",
-        shardScheme: {
-            total: 1
-        }
+        autoRestart: true,
+        restartDelay: 2500
     };
+
+    if (argv.shardLength) {
+        template.shardScheme.total = argv.shardLength
+    }
+
+    if (argv.compiler) {
+        template.compiler = argv.compiler
+    }
 
     if (!fs.existsSync(configPath) || force) {
         fs.writeFileSync(configPath, JSON.stringify(template, null, 2));
@@ -63,13 +71,18 @@ yargs(hideBin(process.argv))
             .positional('compiler', {
                 describe: 'Choose compiler or language',
                 default: 'node',
-                type: 'string'
+                type: 'string',
+                choices: ["node", "python", "ruby"]
             })
-            
+
             .option('serverName', {
                 alias: 's',
                 describe: 'Set server name manually',
                 type: 'string'
+            })
+            .option('shardLength', {
+                describe: "Set shard total",
+                type: "number"
             })
             .option('force', {
                 alias: 'f',
@@ -79,7 +92,7 @@ yargs(hideBin(process.argv))
             });
     }, argv => {
         const serverName = argv.serverName || os.hostname();
-        createConfig(serverName, argv.force);
+        createConfig(serverName, argv.force, argv);
     })
 
     .command('run', 'Start the server', yargs => {
@@ -103,6 +116,8 @@ yargs(hideBin(process.argv))
             `\n${chalk.cyan.bold('⤜ Author       :')} ${chalk.dim.bold(config.author ?? 'Unknown')}` +
             `\n${chalk.cyan.bold('⤜ Server       :')} ${chalk.dim.bold(config.serverName)}` +
             `\n${chalk.cyan.bold('⤜ OS           :')} ${chalk.dim.bold(os.type())}` +
+            (config?.shardScheme?.total ?
+                `\n${chalk.cyan.bold('⤜ Shard        :')} ${chalk.dim.bold(config?.shardScheme?.total)}` : "") +
             `\n${chalk.cyan.bold('⤜ CPU          :')}\n${chalk.dim.bold(
                 os.cpus().map((cpu, i) =>
                     `${i === 0 ? `${os.cpus().length} Cores\n` : ''}${cpu.model} @${cpu.speed}MHz`
@@ -114,16 +129,17 @@ yargs(hideBin(process.argv))
         const shardCount = config?.shardScheme?.total ?? 1;
 
         const spawnProcess = (shardId, shardName) => {
-            const printer = new Print(shardId);
+            const printer = new Print(shardId, shardName);
 
             if (!config.script && !config.main) {
                 console.error(chalk.red("No 'script' or 'main' defined in steviour.json"));
                 process.exit(1);
             }
 
+            const compiler = argv.compiler || 'node';
             const command = config.script
                 ? spawn(config.script, { shell: true, cwd: dir, env: buildEnv(shardId, shardName, config), stdio: 'inherit' })
-                : spawn('node', [config.main], { cwd: dir, env: buildEnv(shardId, shardName, config), stdio: 'inherit' });
+                : spawn(compiler, [config.main], { cwd: dir, env: buildEnv(shardId, shardName, config), stdio: 'inherit' });
 
             if (!command) {
                 return printer.out(chalk.red("Failed to spawn the process. Please check the command and script path."));
@@ -131,7 +147,11 @@ yargs(hideBin(process.argv))
 
             command.on('close', code => {
                 printer.out(`Process exited with code ${code}, restarting...\n`);
-                setTimeout(spawnProcess, 1000);
+                if (config.autoRestart) {
+                    setTimeout(() => {
+                        spawnProcess(shardId, shardName)
+                    }, config.restartDelay ?? 1000);
+                }
             });
         };
 
@@ -145,7 +165,7 @@ yargs(hideBin(process.argv))
             for (let i = 0; i < shardCount; i++) {
                 const input = `${i}-${config.name}`;
                 const hash = crypto.createHash('sha1').update(input).digest('hex');
-                shardName = BigInt('0x' + hash).toString(36).toUpperCase().substring(0, 5);
+                shardName = BigInt('0x' + hash).toString(36).toUpperCase().substring(0, 6);
 
                 spawnProcess(i, shardName);
             }
@@ -160,7 +180,7 @@ function buildEnv(i, shardId, config) {
         ...process.env,
         SYSTEM_ID: i,
         SYSTEM_NAME: shardId,
-        SYSTEM_SERVERNAME: config.serverName,
-        SYSTEM_SHARDLENGTH: config.shardScheme.total
+        SYSTEM_SERVERNAME: config?.serverName,
+        SYSTEM_SHARDLENGTH: config?.shardScheme?.total || 0
     };
 }
