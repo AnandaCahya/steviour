@@ -1,5 +1,5 @@
 {
-  "name": "steviour",
+  "name": "@anandacahya/steviour",
   "version": "1.1.0",
   "main": "steviour.js",
   "bin": {
