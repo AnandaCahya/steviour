@@ -160,6 +160,7 @@ function buildEnv(i, shardId, config) {
         ...process.env,
         SYSTEM_ID: i,
         SYSTEM_NAME: shardId,
-        SYSTEM_SERVERNAME: config.serverName
+        SYSTEM_SERVERNAME: config.serverName,
+        SYSTEM_SHARDLENGTH: config.shardScheme.total
     };
 }

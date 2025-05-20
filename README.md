@@ -44,3 +44,15 @@ or another compiler like
 {
     "script": "ruby index.rb"
 }
+```
+
+### Shard identification
+
+Steviour will set `ENVIRONMENT` in your shard runtime.
+
+ENV | Desc | Data Type
+---|---|---
+SYSTEM_ID | Shard ID | Number
+SYSTEM_NAME | Shard Unique ID | String
+SYSTEM_SERVERNAME | Runtime hostname / server name | String
+SYSTEM_SHARDLENGTH | Shard Total | Number
