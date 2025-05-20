@@ -5,6 +5,9 @@
   "bin": {
     "steviour": "./steviour.js"
   },
+  "scripts": {
+    "test": "echo \"Success, It's testing\""
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

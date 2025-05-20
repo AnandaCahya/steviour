@@ -1,6 +1,6 @@
 # Steviour
 
-**Steviour** is a Node.js-based CLI tool for generating server configuration files (`steviour.json`) and running Node.js applications with a **lightweight sharding system**—allowing you to spawn multiple process instances across CPU cores. It includes built-in **auto-restart** on failure and displays detailed system information at startup. Ideal for projects like bots, microservices, or parallel server processes that benefit from multi-core execution.
+**Steviour** is a Node.js-based CLI tool for generating server configuration files (`steviour.json`) and managing application runtimes with a lightweight sharding system—spawning multiple process instances based on your selected compiler (e.g. Node.js, Python, Ruby). It features automatic restarts on failure and displays detailed system information on startup. Ideal for running sharded or multi-process applications such as bots, microservices, or background workers across multiple CPU cores.
 
 ## Installation
 
