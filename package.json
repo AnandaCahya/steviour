@@ -1,6 +1,6 @@
 {
   "name": "@anandacahya/steviour",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "main": "steviour.js",
   "bin": {
     "steviour": "./steviour.js"
@@ -15,6 +15,7 @@
   "dependencies": {
     "cfonts": "^3.3.0",
     "chalk": "^4.1.2",
+    "chokidar": "^4.0.3",
     "colors": "^1.4.0",
     "dotenv": "^16.5.0",
     "yargs": "^17.7.2"
