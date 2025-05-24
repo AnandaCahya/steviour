@@ -18,6 +18,12 @@ module.exports = {
             describe: 'Development mode',
             type: 'boolean',
             default: false
+        })
+        .option('devdelay', {
+            alias:"dd",
+            describe: "Delay (in ms) after a file changes in development mode",
+            type: "number",
+            default: 1000
         }),
     handler: async (argv) => {
         const config = loadConfig();

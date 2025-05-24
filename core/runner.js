@@ -22,7 +22,7 @@ async function runShards(config, argv) {
                 waiting = setTimeout(function () {
                     console.log(chalk.yellow(`[DEV] Detected change, restarting shard ${argv.shardId}...`));
                     restartProcess(argv.shardId, shardName, config, argv, dir);
-                }, 1000)
+                }, argv.devdelay ?? 1000)
             });
         }
 
@@ -45,7 +45,7 @@ async function runShards(config, argv) {
                         restartProcess(i, shardName, config, argv, dir);
                         await delay(config?.shardScheme?.delay ?? 2000);
                     }
-                }, 1000)
+                }, argv.devdelay ?? 1000)
             });
         }
     }
