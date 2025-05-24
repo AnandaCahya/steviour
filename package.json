@@ -1,6 +1,6 @@
 {
-  "name": "@anandacahya/steviour",
-  "version": "1.2.0",
+  "name": "steviour",
+  "version": "1.2.1",
   "main": "steviour.js",
   "bin": {
     "steviour": "./steviour.js"
@@ -8,10 +8,15 @@
   "scripts": {
     "test": "echo \"Success, It's testing\""
   },
-  "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "CLI for managing Steviour server",
+  "description": "CLI tool for managing sharded or multi-runtime applications with simple configuration and automatic process handling.",
+  "keywords": [
+    "sharding",
+    "process-manager",
+    "multi-runtime",
+    "cli"
+  ],
   "dependencies": {
     "cfonts": "^3.3.0",
     "chalk": "^4.1.2",
